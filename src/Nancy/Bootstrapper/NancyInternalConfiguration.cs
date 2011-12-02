@@ -4,6 +4,7 @@ namespace Nancy.Bootstrapper
     using System.Collections.Generic;
     using System.Linq;
 
+    using Nancy.Diagnostics;
     using Nancy.ErrorHandling;
     using Nancy.ModelBinding;
     using Nancy.Routing;
@@ -51,6 +52,7 @@ namespace Nancy.Bootstrapper
                         CsrfTokenValidator = typeof(DefaultCsrfTokenValidator),
                         ObjectSerializer = typeof(DefaultObjectSerializer),
                         Serializers = new List<Type>(new[] { typeof(DefaultJsonSerializer), typeof(DefaultXmlSerializer) }),
+                        InteractiveDiagnosticProviders = new List<Type>(AppDomainAssemblyTypeScanner.TypesOf<IDiagnosticsProvider>()),
                     };
             }
         }
@@ -101,7 +103,9 @@ namespace Nancy.Bootstrapper
 
         public Type ObjectSerializer { get; set; }
 
-        public IList<Type> Serializers { get; set; } 
+        public IList<Type> Serializers { get; set; }
+
+        public IList<Type> InteractiveDiagnosticProviders { get; set; } 
 
         /// <summary>
         /// Gets a value indicating whether the configuration is valid.
@@ -178,6 +182,7 @@ namespace Nancy.Bootstrapper
             {
                 new CollectionTypeRegistration(typeof(ISerializer), this.Serializers), 
                 new CollectionTypeRegistration(typeof(IErrorHandler), this.ErrorHandlers), 
+                new CollectionTypeRegistration(typeof(IDiagnosticsProvider), this.InteractiveDiagnosticProviders), 
             };
         }
     }
