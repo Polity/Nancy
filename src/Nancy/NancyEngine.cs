@@ -20,7 +20,7 @@
         private readonly IRouteResolver resolver;
         private readonly IRouteCache routeCache;
         private readonly INancyContextFactory contextFactory;
-        private readonly IDiagnosticSessions sessionProvider;
+        private readonly IRequestTracing sessionProvider;
         private readonly IEnumerable<IErrorHandler> errorHandlers;
 
         /// <summary>
@@ -29,7 +29,7 @@
         /// <param name="resolver">An <see cref="IRouteResolver"/> instance that will be used to resolve a route, from the modules, that matches the incoming <see cref="Request"/>.</param>
         /// <param name="contextFactory">A factory for creating contexts</param>
         /// <param name="errorHandlers">Error handlers</param>
-        public NancyEngine(IRouteResolver resolver, INancyContextFactory contextFactory, IEnumerable<IErrorHandler> errorHandlers, IDiagnosticSessions sessionProvider)
+        public NancyEngine(IRouteResolver resolver, INancyContextFactory contextFactory, IEnumerable<IErrorHandler> errorHandlers, IRequestTracing sessionProvider)
         {
             if (resolver == null)
             {
@@ -108,7 +108,9 @@
 
             if (ctx.Response != null)
             {
-                ctx.Diagnostic.ResponseType = ctx.Response.GetType();
+                ctx.Trace.ResponseType = ctx.Response.GetType();
+                ctx.Trace.StatusCode = ctx.Response.StatusCode;
+                ctx.Trace.ContentType = ctx.Response.ContentType;
             }
 
             sessionProvider.AddRequestDiagnosticToSession(sessionGuid, ctx);
