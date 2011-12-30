@@ -90,8 +90,14 @@
 
                         if (context.Request.Cookies.ContainsKey(CsrfToken.DEFAULT_CSRF_KEY))
                         {
-                            context.Items[CsrfToken.DEFAULT_CSRF_KEY] = HttpUtility.UrlDecode(context.Request.Cookies[CsrfToken.DEFAULT_CSRF_KEY]);
-                            return;
+                            var decodedValue = HttpUtility.UrlDecode(context.Request.Cookies[CsrfToken.DEFAULT_CSRF_KEY]);
+                            var cookieToken = ObjectSerializer.Deserialize(decodedValue) as CsrfToken;
+
+                            if (TokenValidator.CookieTokenStillValid(cookieToken))
+                            {
+                                context.Items[CsrfToken.DEFAULT_CSRF_KEY] = decodedValue;
+                                return;
+                            }
                         }
 
                         var token = new CsrfToken

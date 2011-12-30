@@ -53,6 +53,7 @@ namespace Nancy.Bootstrapper
                         ObjectSerializer = typeof(DefaultObjectSerializer),
                         Serializers = new List<Type>(new[] { typeof(DefaultJsonSerializer), typeof(DefaultXmlSerializer) }),
                         InteractiveDiagnosticProviders = new List<Type>(AppDomainAssemblyTypeScanner.TypesOf<IDiagnosticsProvider>()),
+                        RequestTracing = typeof(DefaultRequestTracing),
                     };
             }
         }
@@ -105,7 +106,9 @@ namespace Nancy.Bootstrapper
 
         public IList<Type> Serializers { get; set; }
 
-        public IList<Type> InteractiveDiagnosticProviders { get; set; } 
+        public IList<Type> InteractiveDiagnosticProviders { get; set; }
+
+        public Type RequestTracing { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the configuration is valid.
@@ -169,6 +172,7 @@ namespace Nancy.Bootstrapper
                 new TypeRegistration(typeof(IViewLocationProvider), this.ViewLocationProvider),
                 new TypeRegistration(typeof(ICsrfTokenValidator), this.CsrfTokenValidator), 
                 new TypeRegistration(typeof(IObjectSerializer), this.ObjectSerializer), 
+                new TypeRegistration(typeof(IRequestTracing), this.RequestTracing), 
             };
         }
 
