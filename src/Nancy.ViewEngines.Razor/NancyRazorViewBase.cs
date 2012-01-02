@@ -102,7 +102,20 @@
         /// <param name="value">The value.</param>
         public virtual void Write(object value)
         {
-            WriteLiteral(HttpUtility.HtmlEncode(value));
+            if (value != null)
+            {
+                string stringValue;
+                if (value is IHtmlString)
+                {
+                    stringValue = ((IHtmlString)value).ToHtmlString();
+                }
+                else
+                {
+                    stringValue = value.ToString();
+                }
+
+                WriteLiteral(System.Net.WebUtility.HtmlEncode(stringValue));
+            }            
         }
 
         /// <summary>
